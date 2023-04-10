@@ -1,0 +1,40 @@
+app.get("/seniorEmployees", async function (req, res) {
+  const senioremp = await client
+    .db("guvitask")
+    .collection("seniorEmployees")
+    .find({})
+    .toArray();
+  senioremp
+    ? res.send(senioremp)
+    : res.status(404).send({ message: "Not found" });
+});
+
+app.get("/seniorEmployees/:id", async function (req, res) {
+  const { id } = req.params;
+  const emp = await client
+    .db("guvitask")
+    .collection("seniorEmployees")
+    .findOne({ id: id });
+  emp ? res.send(emp) : res.status(404).send({ message: "Employee not found" });
+});
+
+app.post("/seniorEmployees/add", express.json(), async function (req, res) {
+  const data = req.body;
+  const add = await client
+    .db("guvitask")
+    .collection("seniorEmployees")
+    .insertMany(data);
+
+  res.send(add);
+});
+
+app.get("/juniorEmployees", async function (req, res) {
+  const junioremp = await client
+    .db("guvitask")
+    .collection("juniorEmployees")
+    .find({})
+    .toArray();
+  junioremp
+    ? res.send(junioremp)
+    : res.status(404).send({ message: "Not found" });
+});
