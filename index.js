@@ -84,47 +84,28 @@ const hallData = [
     roomName: "duplex",
   },
 ]
-
+// ------------------------------------------------------------------------------------
 app.get("/hallDetails", async function(req,res){
   const result = await client.db("b42wd2").collection("hallData").find({}).toArray();
   res.send(result);
 })
-
+// -------------------------------------------------------------------------------------
 app.post("/hallDetails", express.json(), async function(req,res){
   const data = req.body;
   const result = await client.db("b42wd2").collection("hallData").insertMany(data);
   res.send(result);
-})
-
-// db.movies.updateOne({name: "PS2"}, {$set: {language: "tamil"}})
-// db.movies.updateOne({name: "vikram"}, {$set: {language: "tamil"}})
-// db.movies.updateOne({name: "Baahubali"}, {$set: {language: "tamil"}})
+});
 // --------------------------------------------------------------------------------------
 // // Booking a room
-// app.put("/hallDetails/:id", function(req,res){
-//   if(ifBooked != "true"){
-//     const data = req.body;
-//     const result = client.db("b42wd2").collections("hallData").updateOne({id: id}, {$set: {}})
-//   }
-// })
-app.put("/hallBooking/:id", async function(req,res){
+app.put("/hallBooking/:id", express.json(), async function(req,res){
   const { id } = req.params;
-  // const halls = hallData.find((hall) => hall.id === id);
-  //logic for not updating an already booked room.
-  // if (halls.ifBooked === "true") {
-  //   res.status(400).send("Hey this room is already booked");
-  //   return;
-  // } else{
-    // halls.customerName = req.body.customerName;
-    // halls.date = req.body.date;
-    // halls.startTime = req.body.startTime;
-    // halls.endTime = req.body.endTime;
-    // res.send(halls);
-    // const update = req.body;
-    const result = await client.db("b42wd2").collection("hallData").update({id: id}, {$set: {customerName: req.body.customerName, date: req.body, startTime: req.body, endTime: req.body}});
-    console.log(req.body);
+  const data = req.body;
+  if(hallData[id].ifBooked === "false"){
+    const result = await client.db("b42wd2").collection("hallData").updateOne({id: id}, {$set: data});
     res.send(result);
-  // }
+  } else{
+    res.send({message: "Hall already booked"});
+  }
 });
 // ---------------------------------------------------------------------------------------
 // List all rooms with booked data
