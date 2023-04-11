@@ -107,12 +107,29 @@ app.post("/hallDetails", express.json(), async function(req,res){
 //     const result = client.db("b42wd2").collections("hallData").updateOne({id: id}, {$set: {}})
 //   }
 // })
+app.put("/hallBooking/:id", async function(req,res){
+  const { id } = req.params;
+  // const halls = hallData.find((hall) => hall.id === id);
+  //logic for not updating an already booked room.
+  // if (halls.ifBooked === "true") {
+  //   res.status(400).send("Hey this room is already booked");
+  //   return;
+  // } else{
+    // halls.customerName = req.body.customerName;
+    // halls.date = req.body.date;
+    // halls.startTime = req.body.startTime;
+    // halls.endTime = req.body.endTime;
+    // res.send(halls);
+    // const update = req.body;
+    const result = await client.db("b42wd2").collection("hallData").update({id: id}, {$set: {customerName: req.body.customerName, date: req.body, startTime: req.body, endTime: req.body}});
+    console.log(req.body);
+    res.send(result);
+  // }
+});
 // ---------------------------------------------------------------------------------------
 // List all rooms with booked data
 app.get("/bookedHalls", async function(req,res){
-  // db.movies.find({name: "RRR"})
   const result = await client.db("b42wd2").collection("hallData").find({ifBooked: "true"}).toArray();
-  // const result = hallData.filter((data)=>data.ifBooked=="true");
   res.send(result);
 })
 // ---------------------------------------------------------------------------------------
@@ -121,4 +138,5 @@ app.get("/bookedCustomers", async function(req,res){
   const result = await client.db("b42wd2").collection("hallData").find({ifBooked: "true"}).toArray();
   res.send(result);
 })
+
 app.listen(PORT, () => console.log(`The server started in: ${PORT} ✨✨`));
