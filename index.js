@@ -16,7 +16,7 @@ console.log("Mongo is connected !!!  ");
 app.use(express.json());
 
 var home =
-  "Hello, Welcome to the HallBooking API, For halldetails = /hallDetails, For rooms with booked data = /bookedHalls, For customers with booked data = /bookedCustomers, For number of times booked by a customer = /noOfTimes";
+  "Hello, Welcome to the HallBooking API, For halldetails = /hallDetails , For rooms with booked data = /bookedHalls , For customers with booked data = /bookedCustomers , For number of times booked by a customer = /noOfTimes ";
 // -----------------------------------------------------------------------------------
 // Home Page
 app.get("/", function (request, response) {
