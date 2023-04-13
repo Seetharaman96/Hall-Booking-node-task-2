@@ -16,7 +16,7 @@ console.log("Mongo is connected !!!  ");
 app.use(express.json());
 
 var home =
-  "Hello, Welcome to the HallBooking API, For halldetails = /hallDetails , For rooms with booked data = /bookedHalls , For customers with booked data = /bookedCustomers , For number of times booked by a customer = /noOfTimes ";
+  "Hello all , Welcome to the HallBooking API , For halldetails = /hallDetails , For hallDetails by ID = /hallDetails/:id , For rooms with booked data = /bookedHalls , For customers with booked data = /bookedCustomers , For number of times booked by a customer = /noOfTimes ";
 // -----------------------------------------------------------------------------------
 // Home Page
 app.get("/", function (request, response) {
@@ -41,6 +41,18 @@ app.post("/createHall", async function (req, res) {
     .collection("hallData")
     .insertMany(data);
   res.send(result);
+});
+// --------------------------------------------------------------------------------------
+// Get hall details by id
+app.get("/hallDetails/:id", async function (req, res) {
+  const { id } = req.params;
+  const halls = await client
+    .db("b42wd2")
+    .collection("hallData")
+    .find({})
+    .toArray();
+  const hall = halls.find((hall) => hall.id === id);
+  hall ? res.send(hall) : res.status(404).send({ message: "Hall not found" });
 });
 // --------------------------------------------------------------------------------------
 // Booking a room
