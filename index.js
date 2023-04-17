@@ -3,7 +3,7 @@ dotenv.config();
 // const express = require("express"); // "type": "commonjs"
 import express from "express"; // "type": "module"
 const app = express();
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const PORT = 4000;
 
@@ -16,7 +16,7 @@ console.log("Mongo is connected !!!  ");
 app.use(express.json());
 
 var home =
-  "Hello all , Welcome to the HallBooking API , For halldetails = /hallDetails , For hallDetails by ID = /hallDetails/:id , For rooms with booked data = /bookedHalls , For customers with booked data = /bookedCustomers , For number of times booked by a customer = /noOfTimes ";
+  "Hello all , Welcome to the HallBooking API , 1) For halldetails = /hallDetails , 2) For hallDetails by ID = /hallDetails/643d67ad4e8e8cc0a599ca26 (OR) /hallDetails/643d67ad4e8e8cc0a599ca27 (OR) /hallDetails/643d67ad4e8e8cc0a599ca28 (OR) /hallDetails/643d67ad4e8e8cc0a599ca29 (OR) /hallDetails/643d67ad4e8e8cc0a599ca2a , 3) For rooms with booked data = /bookedHalls , 4) For customers with booked data = /bookedCustomers , 5) For number of times booked by a customer = /noOfTimes ";
 // -----------------------------------------------------------------------------------
 // Home Page
 app.get("/", function (request, response) {
@@ -49,30 +49,27 @@ app.get("/hallDetails/:id", async function (req, res) {
   const halls = await client
     .db("b42wd2")
     .collection("hallData")
-    .find({})
+    .find({_id: new ObjectId(id)})
     .toArray();
-  const hall = halls.find((hall) => hall.id === id);
-  hall ? res.send(hall) : res.status(404).send({ message: "Hall not found" });
+  halls ? res.send(halls) : res.status(404).send({ message: "Hall not found" });
 });
 // --------------------------------------------------------------------------------------
 // Booking a room
 app.put("/hallBooking/:id", async function (req, res) {
   const { id } = req.params;
   const data = req.body;
-  const halls = await client
+  const hall = await client
     .db("b42wd2")
     .collection("hallData")
-    .find({})
-    .toArray();
-  const hall = halls.find((hall) => hall.id === id);
+    .findOne({ _id: new ObjectId(id) })
   console.log(hall);
-  if (hall.ifBooked == "true") {
+  if (hall.ifBooked === "true") {
     res.send({ message: "Hall already booked" });
   } else {
     const result = await client
       .db("b42wd2")
       .collection("hallData")
-      .updateOne({ id: id }, { $set: data });
+      .updateOne({ _id: new ObjectId(id) }, { $set: data });
     res.send(result);
   }
 });
